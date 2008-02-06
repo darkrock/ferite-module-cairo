@@ -18,6 +18,12 @@ module-header
 		
 	} CairoContextData;
 	
+	typedef struct pango_font_description_data
+	{
+		PangoFontDescription* font_description;
+		
+	} PangoFontDescriptionData;
+	
 	typedef struct pango_layout_data
 	{
 		PangoLayout* layout;
@@ -39,14 +45,14 @@ namespace Cairo
 {
 	final number FONT_SLANT_NORMAL = 0;
 	final number FONT_SLANT_ITALIC = 1;
-	final number FONT_SLANT_OBLIQUE = 3;
+	final number FONT_SLANT_OBLIQUE = 2;
 	
 	final number FONT_WEIGHT_NORMAL = 0;
 	final number FONT_WEIGHT_BOLD = 1;
 	
 	/**
 	 * @class Context
-	 * @brief The Cairo drawing context
+	 * @brief The Cairo drawing context.
 	 */
 	class Context
 	{
@@ -59,8 +65,8 @@ namespace Cairo
 		 * @function constructor
 		 * @declaration function constructor( object surface )
 		 * @brief This is the constructor for the class Context.
-		 * @param object A Cairo surface.
-		 * @return object A newly created Cairo context object.
+		 * @param object surface a Cairo surface
+		 * @return A newly created Cairo context object.
 		 */
 		native function constructor( object surface )
 		{
@@ -90,7 +96,11 @@ namespace Cairo
 		/**
 		 * @function showPage
 		 * @declaration function showPage( )
-		 * @breif Finishes the document.
+		 * @breif Emits and clears the current page for backends that support
+		          multiple pages.
+		 * @description Emits and clears the current page for backends that
+		                support multiple pages. Use copyPage() if you don't want
+		                to clear the page.
 		 */
 		native function showPage()
 		{
@@ -102,10 +112,15 @@ namespace Cairo
 		/**
 		 * @function setSourceRGB
 		 * @declaration function setSourceRGB( number red, number green, number blue )
-		 * @biref Sets the color that stuff should be drawn in.
-		 * @param number red The amount of red.
-		 * @param number green The amount of green.
-		 * @param number blue The amount of blue.
+		 * @biref Sets the source pattern within context to an opaque color.
+		 * @param number red red component of color
+		 * @param number green component of color
+		 * @param number blue blue component of color
+		 * @description This opaque color will then be used for any subsequent
+		                drawing operation until a new source pattern is set.
+		                The color components are floating point numbers in the
+		                range 0 to 1. If the values passed in are outside that
+		                range, they will be clamped.
 		 */
 		native function setSourceRGB(number red, number green, number blue)
 		{
@@ -117,10 +132,17 @@ namespace Cairo
 		/**
 		 * @function selectFontFace
 		 * @declaration function selectFontFace( string family, number slant, number weight )
-		 * @brief Selects a font family and a style.
-		 * @param string family A font family name.
-		 * @param number slant The slant for the font.
-		 * @param number weight THe weight for the font.
+		 * @brief Selects a family and style of font from a simplified
+		          description as a family name, slant and weight.
+		 * @param string family a font family name
+		 * @param number slant the slant for the font
+		 * @param number weight the weight for the font
+		 * @description This function is meant to be used only for applications
+		                with simple font needs: Cairo doesn't provide for
+		                operations such as listing all available fonts on the
+		                system, and it is expected that most applications will
+		                need to use a more comprehensive font handling and text
+		                layout library in addition to cairo.
 		 */
 		native function selectFontFace( string family, number slant, number weight )
 		{
@@ -240,7 +262,12 @@ namespace Cairo
 		}
 		
 		/**
-		 *
+		 * @function showPangoLayoutLine
+		 * @declaration function showPangoLayoutLine( object layoutLine )
+		 * @brief Draws a Pango.LayoutLine in the specified cairo context.
+		 * @params object A PangoLayoutLine.
+		 * @description The origin of the glyphs (the left edge of the line)
+		                will be drawn at the current point of the cairo context.
 		 */
 		native function showPangoLayoutLine( object layoutLine )
 		{
@@ -254,14 +281,20 @@ namespace Cairo
 			FE_RETURN_VOID;
 		}
 	}
+	/**
+	 * @end
+	 */
 	
 	/**
 	 * @class Surface
 	 * @brief Base class for cairo surfaces.
 	 */
-	class Surface
+	abstract class Surface
 	{
 	}
+	/**
+	 * @end
+	 */
 	
 	/**
 	 * @class PDFSurface
@@ -273,7 +306,6 @@ namespace Cairo
 		/**
 		 * @function constructor
 		 * @declaration function constructor( )
-		 * @breif 
 		 */
 		native function constructor( )
 		{
@@ -286,7 +318,6 @@ namespace Cairo
 		/**
 		 * @function constructor
 		 * @declaration function constructor( string filename, number width, number height )
-		 * @brief
 		 */
 		native function constructor( string filename, number width, number height )
 		{
@@ -307,131 +338,13 @@ namespace Cairo
 			
 			ffree( surface_data );
 		}
-	}	
-}
+	}
+	/**
+	 * @end
+	 */
 
+}
 /**
- *
+ * @end
  */
-namespace Pango
-{
-	/**
-	 *
-	 */
-	class FontDescription
-	{
-		/**
-		 *
-		 */
-		function constructor( )
-		{
-		}
-		
-		/**
-		 *
-		 */
-		function constructor( string str )
-		{
-		}
-	}
-	
-	/**
-	 * @class Layout
-	 * @brief
-	 */
-	class Layout
-	{
-		native function constructor( )
-		{
-		}
-		
-		/**
-		 *
-		 */
-		native function constructor( object context )
-		{
-		}
-		
-		native function destructor( )
-		{
-			PangoLayoutData* layout_data = self->odata;
-			
-			if( layout_data->layout != NULL )
-			{
-				g_object_unref( layout_data->layout );
-			}
-			
-			ffree( layout_data );
-		}
-		
-		/**
-		 * 
-		 */
-		native function setText( string text )
-		{
-
-		}
-		
-		/**
-		 *
-		 */
-		native function setWidth( number width )
-		{
-		}
-		
-		/**
-		 *
-		 */
-		native function setFontDescription( object font_desc_obj )
-		{
-		}
-		
-		/**
-		 *
-		 */
-		native function getIter( )
-		{
-		}
-	}
-	
-	/**
-	 *
-	 */
-	class LayoutIter
-	{
-		/**
-		 *
-		 */
-		native function getBaseline()
-		{
-		}
-		/**
-		 *
-		 */
-		native function getLineYRange()
-		{
-		}
-		
-		/**
-		 *
-		 */
-		native function getLineExtents()
-		{
-		}
-	}
-	
-	/**
-	 *
-	 */
-	class LayoutLine
-	{
-	}
-	
-	/**
-	 *
-	 */
-	class Rectangle
-	{
-	}
-}
 
