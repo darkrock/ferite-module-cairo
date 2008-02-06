@@ -207,7 +207,7 @@ namespace Cairo
 		native function createPangoLayout( )
 		{
 			printf("1\n");
-			FeriteNamespaceBucket* namespace_bucket = NULL;
+			FeriteNamespaceBucket* nsb = NULL;
 			
 			FeriteVariable* layout_class = NULL;
 			FeriteVariable* layout_object = NULL;
@@ -217,12 +217,12 @@ namespace Cairo
 			
 			CairoContextData* context_data = self->odata;
 						
-			namespace_bucket = ferite_find_namespace(script, script->mainns, "Pango.Layout", FENS_CLS);
+			nsb = ferite_find_namespace(script, script->mainns, "Pango.Layout", FENS_CLS);
 			printf("2\n");
-			if( namespace_bucket != NULL )
+			if( nsb != NULL )
 			{
 				printf("3\n");
-				layout_class = (FeriteVariable*) namespace_bucket->data;
+				layout_class = (FeriteVariable*) nsb->data;
 				printf("3,5\n");
 				printf("%s\n", layout_class->type);
 				printf("4\n");
