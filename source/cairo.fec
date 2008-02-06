@@ -1,0 +1,448 @@
+uses 'cairo.lib';
+
+module-header
+{
+	#include <cairo/cairo.h>
+	#include <cairo/cairo-pdf.h>
+	#include <pango-1.0/pango/pangocairo.h>
+	
+	typedef struct cairo_surface_data
+	{
+		cairo_surface_t* surface;
+	
+	} CairoSurfaceData;
+	
+	typedef struct cairo_context_data
+	{
+		cairo_t* context;
+		
+	} CairoContextData;
+	
+	typedef struct pango_layout_data
+	{
+		PangoLayout* layout;
+		
+	} PangoLayoutData;
+	
+	typedef struct pango_layout_line_data
+	{
+		PangoLayoutLine* layout_line;
+		
+	} PangoLayoutLineData;
+}
+
+/**
+ * @namespace Cairo
+ * @brief Provides a set of classes to create vector graphics.
+ */
+namespace Cairo
+{
+	final number FONT_SLANT_NORMAL = 0;
+	final number FONT_SLANT_ITALIC = 1;
+	final number FONT_SLANT_OBLIQUE = 3;
+	
+	final number FONT_WEIGHT_NORMAL = 0;
+	final number FONT_WEIGHT_BOLD = 1;
+	
+	/**
+	 * @class Context
+	 * @brief The Cairo drawing context
+	 */
+	class Context
+	{
+		native function constructor()
+		{
+			FE_RETURN_NULL_OBJECT;
+		}
+		
+		/**
+		 * @function constructor
+		 * @declaration function constructor( object surface )
+		 * @brief This is the constructor for the class Context.
+		 * @param object A Cairo surface.
+		 * @return object A newly created Cairo context object.
+		 */
+		native function constructor( object surface )
+		{
+			CairoContextData* context_data = fmalloc( sizeof( CairoContextData ) );
+			context_data->context = NULL;
+			
+			if( ferite_object_is_sublass( surface, "Surface" ) == FE_TRUE )
+			{
+				CairoSurfaceData* surface_data = surface->odata;
+				context_data->context = cairo_create( surface_data->surface );
+				self->odata = context_data;
+			}
+		}
+		
+		native function destructor( )
+		{
+			CairoContextData *context = self->odata;
+			
+			if( context->context )
+			{
+				cairo_destroy( context->context );
+			}
+			
+			ffree( context );
+		}
+		
+		/**
+		 * @function showPage
+		 * @declaration function showPage( )
+		 * @breif Finishes the document.
+		 */
+		native function showPage()
+		{
+			CairoContextData* context = self->odata;
+			cairo_show_page( context->context );
+			FE_RETURN_VOID;
+		}
+		
+		/**
+		 * @function setSourceRGB
+		 * @declaration function setSourceRGB( number red, number green, number blue )
+		 * @biref Sets the color that stuff should be drawn in.
+		 * @param number red The amount of red.
+		 * @param number green The amount of green.
+		 * @param number blue The amount of blue.
+		 */
+		native function setSourceRGB(number red, number green, number blue)
+		{
+			CairoContextData* context = self->odata;
+			cairo_set_source_rgb( context->context, red, green, blue );
+			FE_RETURN_VOID;
+		}
+		
+		/**
+		 * @function selectFontFace
+		 * @declaration function selectFontFace( string family, number slant, number weight )
+		 * @brief Selects a font family and a style.
+		 * @param string family A font family name.
+		 * @param number slant The slant for the font.
+		 * @param number weight THe weight for the font.
+		 */
+		native function selectFontFace( string family, number slant, number weight )
+		{
+			cairo_font_slant_t cairo_slant;
+			cairo_font_weight_t cairo_weight;
+			
+			if( slant == 0.0 )
+			{
+				cairo_slant = CAIRO_FONT_SLANT_NORMAL;
+			}
+			else if( slant == 1.0 )
+			{
+				cairo_slant = CAIRO_FONT_SLANT_ITALIC;
+			}
+		 	else if( slant == 2.0 )
+		 	{
+		 		cairo_slant = CAIRO_FONT_SLANT_OBLIQUE;
+		 	}
+		 	
+		 	if( weight == 0.0 )
+		 	{
+		 		cairo_weight = CAIRO_FONT_WEIGHT_NORMAL;
+		 	}
+			else if( weight == 1.0 )
+		 	{
+				cairo_weight = CAIRO_FONT_WEIGHT_BOLD;
+			}
+			
+			CairoContextData* context = self->odata;
+			
+			cairo_select_font_face( context->context, family->data, cairo_slant, cairo_weight );
+			
+			FE_RETURN_VOID;
+		}
+		 
+		/**
+		 * @function setFontSize
+		 * @declaration function setFontSize( number size )
+		 * @brief Sets the size of the font.
+		 * @param number size The size of the font.
+		 */
+		native function setFontSize( number size )
+		{
+			CairoContextData* context = self->odata;
+			cairo_set_font_size( context->context, size );
+		 	FE_RETURN_VOID;
+		}
+		
+		/**
+		 * @function moveTo
+		 * @declaration function moveTo( number x, number y )
+		 * @brief Move to a position within the document.
+		 * @param number x The X coordinate of the new position.
+		 * @param number y The Y coordinate of the new position.
+		 */
+		native function moveTo(number x, number y)
+		{
+			CairoContextData* context = self->odata;
+			cairo_move_to( context->context, x, y );
+			FE_RETURN_VOID;
+		}
+		 
+		/**
+		 * @function showText
+		 * @declaration function showText( string text )
+		 * @brief Draws a string of text.
+		 * @param string text A string of text.
+		 */
+		native function showText(string text)
+		{
+			CairoContextData* context = self->odata;
+			cairo_show_text(context->context, text->data );
+			FE_RETURN_VOID;
+		}
+		
+		/**
+		 * @function createPangoLayout
+		 * @declaration function createPangoLayout( )
+		 * @brief Creates a Pango layout object.
+		 * @return object A Pango layout object.
+		 * @description Creates a layout object set up to match the current
+		                transformation and target surface of the Cairo context.
+		 */
+		native function createPangoLayout( )
+		{
+			printf("1\n");
+			FeriteNamespaceBucket* namespace_bucket = NULL;
+			
+			FeriteVariable* layout_class = NULL;
+			FeriteVariable* layout_object = NULL;
+			FeriteObject* layout_object_object = NULL;
+			
+			PangoLayout* pango_layout = NULL;
+			
+			CairoContextData* context_data = self->odata;
+						
+			namespace_bucket = ferite_find_namespace(script, script->mainns, "Pango.Layout", FENS_CLS);
+			printf("2\n");
+			if( namespace_bucket != NULL )
+			{
+				printf("3\n");
+				layout_class = (FeriteVariable*) namespace_bucket->data;
+				printf("3,5\n");
+				printf("%s\n", layout_class->type);
+				printf("4\n");
+				layout_object = ferite_build_object( script, VAC( layout_class ) );
+				printf("5\n");
+				/* UNMARK_VARIABLE_AS_DISPOSABLE( layout_object ); */
+				printf("6\n");
+				
+				pango_layout = pango_cairo_create_layout( context_data->context );
+				printf("7\n");
+				PangoLayoutData* layout_data = fmalloc( sizeof( PangoLayoutData ) );
+				printf("8\n");
+				layout_data->layout = NULL;
+				printf("9\n");
+				layout_data->layout = pango_layout;
+				printf("10\n");
+				layout_object_object = VAO( layout_object );
+				printf("10,5\n");
+				/* layout_object_object->odata = layout_data; */
+				printf("11\n");
+				FE_RETURN_OBJECT( VAO( layout_object ) );
+				printf("12\n");
+			}
+			
+			FE_RETURN_NULL_OBJECT;
+		}
+		
+		/**
+		 *
+		 */
+		native function showPangoLayoutLine( object layoutLine )
+		{
+			if( ferite_object_is_sublass( layoutLine, "Pango.LayoutLine" ) == FE_TRUE )
+			{
+				CairoContextData* context_data = self->odata;
+				PangoLayoutLineData* layout_line_data = layoutLine->odata;
+				pango_cairo_show_layout_line(context_data->context, layout_line_data->layout_line );
+			}
+			
+			FE_RETURN_VOID;
+		}
+	}
+	
+	/**
+	 * @class Surface
+	 * @brief Base class for cairo surfaces.
+	 */
+	class Surface
+	{
+	}
+	
+	/**
+	 * @class PDFSurface
+	 * @extends Cairo.Surface
+	 * @brief A Cairo surface for drawing in PDF documents.
+	 */
+	class PDFSurface extends Surface
+	{
+		/**
+		 * @function constructor
+		 * @declaration function constructor( )
+		 * @breif 
+		 */
+		native function constructor( )
+		{
+			CairoSurfaceData* surface_data = fmalloc( sizeof( CairoSurfaceData ) );
+			surface_data->surface = NULL;
+			surface_data->surface = cairo_pdf_surface_create( "pdffile.pdf", 595.28, 841.89 );
+			self->odata = surface_data;
+		}
+		
+		/**
+		 * @function constructor
+		 * @declaration function constructor( string filename, number width, number height )
+		 * @brief
+		 */
+		native function constructor( string filename, number width, number height )
+		{
+			CairoSurfaceData* surface_data = fmalloc( sizeof( CairoSurfaceData ) );
+			surface_data->surface = NULL;
+			surface_data->surface = cairo_pdf_surface_create( filename->data, width, height );
+			self->odata = surface_data;
+		}
+		
+		native function destructor( )
+		{
+			CairoSurfaceData* surface_data = self->odata;
+			
+			if( surface_data->surface )
+			{
+				cairo_surface_destroy( surface_data->surface );
+			}
+			
+			ffree( surface_data );
+		}
+	}	
+}
+
+/**
+ *
+ */
+namespace Pango
+{
+	/**
+	 *
+	 */
+	class FontDescription
+	{
+		/**
+		 *
+		 */
+		function constructor( )
+		{
+		}
+		
+		/**
+		 *
+		 */
+		function constructor( string str )
+		{
+		}
+	}
+	
+	/**
+	 * @class Layout
+	 * @brief
+	 */
+	class Layout
+	{
+		native function constructor( )
+		{
+		}
+		
+		/**
+		 *
+		 */
+		native function constructor( object context )
+		{
+		}
+		
+		native function destructor( )
+		{/*
+			PangoLayoutData* layout_data = self->odata;
+			
+			if( layout_data->layout != NULL )
+			{
+				g_object_unref( layout_data->layout );
+			}
+			
+			ffree( layout_data ); */
+		}
+		
+		/**
+		 * 
+		 */
+		native function setText( string text )
+		{
+
+		}
+		
+		/**
+		 *
+		 */
+		native function setWidth( number width )
+		{
+		}
+		
+		/**
+		 *
+		 */
+		native function setFontDescription( object font_desc_obj )
+		{
+		}
+		
+		/**
+		 *
+		 */
+		native function getIter( )
+		{
+		}
+	}
+	
+	/**
+	 *
+	 */
+	class LayoutIter
+	{
+		/**
+		 *
+		 */
+		native function getBaseline()
+		{
+		}
+		/**
+		 *
+		 */
+		native function getLineYRange()
+		{
+		}
+		
+		/**
+		 *
+		 */
+		native function getLineExtents()
+		{
+		}
+	}
+	
+	/**
+	 *
+	 */
+	class LayoutLine
+	{
+	}
+	
+	/**
+	 *
+	 */
+	class Rectangle
+	{
+	}
+}
+

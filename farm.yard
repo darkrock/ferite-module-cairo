@@ -1,0 +1,30 @@
+<?xml version="1.0" ?>
+<yard name="cairo">
+
+	<module id="cairo">
+		<list type="source">
+			<file name="source/cairo.fec" />
+			<!-- <fileset dir="source" match="utility\.[ch]$" /> -->
+		</list>
+		<property type="C">
+			<program-output program="ferite-config" arguments="--cflags" />
+			<program-output program="pkg-config" arguments="--cflags cairo" />
+			<program-output program="pkg-config" arguments="--cflags pangocairo" />
+		</property>
+		<property type="LD">
+			<program-output program="ferite-config" arguments="--libs" />
+			<program-output program="pkg-config" arguments="--libs cairo" />
+			<program-output program="pkg-config" arguments="--libs pangocairo" />
+		</property>
+		<property type="prefix" value="$(FeriteModuleNativeDir)" />        
+	</module>
+	    
+	<phase id="install" depends="build">
+		<perform action="install" target="cairo" />
+		<copy file="source/cairo.fec" target="$(FeriteModuleSourceDir)" />
+		<copy file="$(ProductDir)/cairo.xml" target="$(FeriteModuleDescriptionDir)" />
+		<execute program="feritedoc" arguments="--regenerate" />
+	</phase>
+    
+</yard>
+
