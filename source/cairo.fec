@@ -206,45 +206,34 @@ namespace Cairo
 		 */
 		native function createPangoLayout( )
 		{
-			printf("1\n");
 			FeriteNamespaceBucket* nsb = NULL;
 			
-			FeriteVariable* layout_class = NULL;
+			FeriteClass* layout_class = NULL;
 			FeriteVariable* layout_object = NULL;
-			FeriteObject* layout_object_object = NULL;
 			
 			PangoLayout* pango_layout = NULL;
 			
 			CairoContextData* context_data = self->odata;
 						
 			nsb = ferite_find_namespace(script, script->mainns, "Pango.Layout", FENS_CLS);
-			printf("2\n");
-			if( nsb != NULL )
+			
+			if( NULL != nsb )
 			{
-				printf("3\n");
-				layout_class = (FeriteVariable*) nsb->data;
-				printf("3,5\n");
-				printf("%s\n", layout_class->type);
-				printf("4\n");
-				layout_object = ferite_build_object( script, VAC( layout_class ) );
-				printf("5\n");
-				/* UNMARK_VARIABLE_AS_DISPOSABLE( layout_object ); */
-				printf("6\n");
+				layout_class = nsb->data;
+				
+				layout_object = ferite_build_object( script, layout_class );
+				
+				UNMARK_VARIABLE_AS_DISPOSABLE( layout_object );
 				
 				pango_layout = pango_cairo_create_layout( context_data->context );
-				printf("7\n");
+				
 				PangoLayoutData* layout_data = fmalloc( sizeof( PangoLayoutData ) );
-				printf("8\n");
 				layout_data->layout = NULL;
-				printf("9\n");
 				layout_data->layout = pango_layout;
-				printf("10\n");
-				layout_object_object = VAO( layout_object );
-				printf("10,5\n");
-				/* layout_object_object->odata = layout_data; */
-				printf("11\n");
+				
+				VAO(layout_object)->odata = layout_data;
+				
 				FE_RETURN_OBJECT( VAO( layout_object ) );
-				printf("12\n");
 			}
 			
 			FE_RETURN_NULL_OBJECT;
@@ -364,7 +353,7 @@ namespace Pango
 		}
 		
 		native function destructor( )
-		{/*
+		{
 			PangoLayoutData* layout_data = self->odata;
 			
 			if( layout_data->layout != NULL )
@@ -372,7 +361,7 @@ namespace Pango
 				g_object_unref( layout_data->layout );
 			}
 			
-			ffree( layout_data ); */
+			ffree( layout_data );
 		}
 		
 		/**

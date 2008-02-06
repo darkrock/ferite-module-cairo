@@ -1,4 +1,10 @@
 -------------------------------------------------------------------------------
+2008-02-06 12:27 (CET), Tobias Eriksson <tobias@cention.net>
+
+ * Fixed bug in Cairo.Context.createPangoLayout() that caused
+   Segmentation faults and removed all debuging output.
+
+-------------------------------------------------------------------------------
 2008-02-06 10:49 (CET), Tobias Eriksson <tobias@cention.net>
 
  * Renamed the namespace bucket to nsb in Cairo.Context.createPangoLayout().
