@@ -1,4 +1,5 @@
 uses 'cairo.lib';
+uses 'pango';
 
 module-header
 {
