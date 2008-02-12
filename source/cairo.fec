@@ -272,11 +272,19 @@ namespace Cairo
 		 */
 		native function showPangoLayoutLine( object layoutLine )
 		{
-			if( ferite_object_is_sublass( layoutLine, "Pango.LayoutLine" ) == FE_TRUE )
+			FeriteNamespaceBucket* nsb = NULL;
+			nsb = ferite_find_namespace( script, script->mainns, "Pango.LayoutLine", FENS_CLS );
+			
+			if( nsb != NULL )
 			{
-				CairoContextData* context_data = self->odata;
-				PangoLayoutLineData* layout_line_data = layoutLine->odata;
-				pango_cairo_show_layout_line(context_data->context, layout_line_data->layout_line );
+				FeriteClass* klass = nsb->data;
+				
+				if( ferite_class_is_subclass( klass,  layoutLine->klass ) == FE_TRUE )
+				{
+					CairoContextData* context_data = self->odata;
+					PangoLayoutLineData* layout_line_data = layoutLine->odata;
+					pango_cairo_show_layout_line(context_data->context, layout_line_data->layout_line );
+				}
 			}
 			
 			FE_RETURN_VOID;
