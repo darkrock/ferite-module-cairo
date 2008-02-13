@@ -1,5 +1,5 @@
 -------------------------------------------------------------------------------
-2008-02-06 17:22 (CET), Tobias Eriksson <tobias@cention.net>
+2008-02-12 17:22 (CET), Tobias Eriksson <tobias@cention.net>
 
  * Fixed bug in Cairo.Context.showPangoLayoutLine().
 
