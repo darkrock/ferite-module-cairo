@@ -6,36 +6,6 @@ module-header
 	#include <cairo/cairo.h>
 	#include <cairo/cairo-pdf.h>
 	#include <pango-1.0/pango/pangocairo.h>
-	
-	typedef struct cairo_surface_data
-	{
-		cairo_surface_t* surface;
-	
-	} CairoSurfaceData;
-	
-	typedef struct cairo_context_data
-	{
-		cairo_t* context;
-		
-	} CairoContextData;
-	
-	typedef struct pango_font_description_data
-	{
-		PangoFontDescription* font_description;
-		
-	} PangoFontDescriptionData;
-	
-	typedef struct pango_layout_data
-	{
-		PangoLayout* layout;
-		
-	} PangoLayoutData;
-	
-	typedef struct pango_layout_line_data
-	{
-		PangoLayoutLine* layout_line;
-		
-	} PangoLayoutLineData;
 }
 
 /**
@@ -71,27 +41,22 @@ namespace Cairo
 		 */
 		native function constructor( object surface )
 		{
-			CairoContextData* context_data = fmalloc( sizeof( CairoContextData ) );
-			context_data->context = NULL;
-			
+			/* NOTICE: ferite_object_is_sub_?_lass  */
 			if( ferite_object_is_sublass( surface, "Surface" ) == FE_TRUE )
 			{
-				CairoSurfaceData* surface_data = surface->odata;
-				context_data->context = cairo_create( surface_data->surface );
-				self->odata = context_data;
+				cairo_surface_t* cairo_surface = surface->odata;
+				cairo_t* context = cairo_create( cairo_surface );
+				self->odata = context;
 			}
 		}
 		
 		native function destructor( )
-		{
-			CairoContextData *context = self->odata;
-			
-			if( context->context )
+		{			
+			if( self->odata )
 			{
-				cairo_destroy( context->context );
+				cairo_t* context = self->odata;
+				cairo_destroy( context );
 			}
-			
-			ffree( context );
 		}
 		
 		/**
@@ -105,8 +70,8 @@ namespace Cairo
 		 */
 		native function showPage()
 		{
-			CairoContextData* context = self->odata;
-			cairo_show_page( context->context );
+			cairo_t* context = self->odata;
+			cairo_show_page( context );
 			FE_RETURN_VOID;
 		}
 		
@@ -125,8 +90,8 @@ namespace Cairo
 		 */
 		native function setSourceRGB(number red, number green, number blue)
 		{
-			CairoContextData* context = self->odata;
-			cairo_set_source_rgb( context->context, red, green, blue );
+			cairo_t* context = self->odata;
+			cairo_set_source_rgb( context, red, green, blue );
 			FE_RETURN_VOID;
 		}
 		
@@ -172,13 +137,13 @@ namespace Cairo
 				cairo_weight = CAIRO_FONT_WEIGHT_BOLD;
 			}
 			
-			CairoContextData* context = self->odata;
+			cairo_t* context = self->odata;
 			
-			cairo_select_font_face( context->context, family->data, cairo_slant, cairo_weight );
+			cairo_select_font_face( context, family->data, cairo_slant, cairo_weight );
 			
 			FE_RETURN_VOID;
 		}
-		 
+		
 		/**
 		 * @function setFontSize
 		 * @declaration function setFontSize( number size )
@@ -187,8 +152,8 @@ namespace Cairo
 		 */
 		native function setFontSize( number size )
 		{
-			CairoContextData* context = self->odata;
-			cairo_set_font_size( context->context, size );
+			cairo_t* context = self->odata;
+			cairo_set_font_size( context, size );
 		 	FE_RETURN_VOID;
 		}
 		
@@ -201,8 +166,8 @@ namespace Cairo
 		 */
 		native function moveTo(number x, number y)
 		{
-			CairoContextData* context = self->odata;
-			cairo_move_to( context->context, x, y );
+			cairo_t* context = self->odata;
+			cairo_move_to( context, x, y );
 			FE_RETURN_VOID;
 		}
 		 
@@ -214,8 +179,8 @@ namespace Cairo
 		 */
 		native function showText(string text)
 		{
-			CairoContextData* context = self->odata;
-			cairo_show_text(context->context, text->data );
+			cairo_t* context = self->odata;
+			cairo_show_text(context, text->data );
 			FE_RETURN_VOID;
 		}
 		
@@ -236,7 +201,7 @@ namespace Cairo
 			
 			PangoLayout* pango_layout = NULL;
 			
-			CairoContextData* context_data = self->odata;
+			cairo_t* context = self->odata;
 						
 			nsb = ferite_find_namespace(script, script->mainns, "Pango.Layout", FENS_CLS);
 			
@@ -248,13 +213,9 @@ namespace Cairo
 				
 				UNMARK_VARIABLE_AS_DISPOSABLE( layout_object );
 				
-				pango_layout = pango_cairo_create_layout( context_data->context );
-				
-				PangoLayoutData* layout_data = fmalloc( sizeof( PangoLayoutData ) );
-				layout_data->layout = NULL;
-				layout_data->layout = pango_layout;
-				
-				VAO(layout_object)->odata = layout_data;
+				pango_layout = pango_cairo_create_layout( context );
+								
+				VAO(layout_object)->odata = pango_layout;
 				
 				FE_RETURN_OBJECT( VAO( layout_object ) );
 			}
@@ -281,9 +242,9 @@ namespace Cairo
 				
 				if( ferite_class_is_subclass( klass,  layoutLine->klass ) == FE_TRUE )
 				{
-					CairoContextData* context_data = self->odata;
-					PangoLayoutLineData* layout_line_data = layoutLine->odata;
-					pango_cairo_show_layout_line(context_data->context, layout_line_data->layout_line );
+					cairo_t* context = self->odata;
+					PangoLayoutLine* layout_line = layoutLine->odata;
+					pango_cairo_show_layout_line(context, layout_line );
 				}
 			}
 			
@@ -318,10 +279,8 @@ namespace Cairo
 		 */
 		native function constructor( )
 		{
-			CairoSurfaceData* surface_data = fmalloc( sizeof( CairoSurfaceData ) );
-			surface_data->surface = NULL;
-			surface_data->surface = cairo_pdf_surface_create( "pdffile.pdf", 595.28, 841.89 );
-			self->odata = surface_data;
+			cairo_surface_t* surface = cairo_pdf_surface_create( "pdffile.pdf", 595.28, 841.89 );
+			self->odata = surface;
 		}
 		
 		/**
@@ -330,22 +289,17 @@ namespace Cairo
 		 */
 		native function constructor( string filename, number width, number height )
 		{
-			CairoSurfaceData* surface_data = fmalloc( sizeof( CairoSurfaceData ) );
-			surface_data->surface = NULL;
-			surface_data->surface = cairo_pdf_surface_create( filename->data, width, height );
-			self->odata = surface_data;
+			cairo_surface_t* surface = cairo_pdf_surface_create( filename->data, width, height );
+			self->odata = surface;
 		}
 		
 		native function destructor( )
 		{
-			CairoSurfaceData* surface_data = self->odata;
-			
-			if( surface_data->surface )
+			if( self->odata )
 			{
-				cairo_surface_destroy( surface_data->surface );
+				cairo_surface_t* surface = self->odata;
+				cairo_surface_destroy( surface );
 			}
-			
-			ffree( surface_data );
 		}
 	}
 	/**
