@@ -68,10 +68,34 @@ namespace Cairo
 		                support multiple pages. Use copyPage() if you don't want
 		                to clear the page.
 		 */
-		native function showPage()
+		native function showPage( )
 		{
 			cairo_t* context = self->odata;
 			cairo_show_page( context );
+			FE_RETURN_VOID;
+		}
+		
+		/**
+		 * @function paint
+		 * @declaration function paint( )
+		 * @brief Paints the current source everywhere within the current clip region
+		 */
+		native function paint( )
+		{
+			cairo_t* context = self->odata;
+			cairo_paint( context );
+			FE_RETURN_VOID;
+		}
+		
+		/**
+		 * @function fill
+		 * @declaration function fill( )
+		 * @brief Fills the current path
+		 */
+		native function fill( )
+		{
+			cairo_t* context = self->odata;
+			cairo_fill( context );
 			FE_RETURN_VOID;
 		}
 		
@@ -115,6 +139,7 @@ namespace Cairo
 			cairo_font_slant_t cairo_slant;
 			cairo_font_weight_t cairo_weight;
 			
+			/* WARNING: Very ugly. Please resolv this somehow. */
 			if( slant == 0.0 )
 			{
 				cairo_slant = CAIRO_FONT_SLANT_NORMAL;
@@ -185,10 +210,30 @@ namespace Cairo
 		}
 		
 		/**
+		 * @function setSourceSurface
+		 * @declaration function setSourceSurface( object surface, number x, number y )
+		 * @brief Create a pattern from a surface and set it as the source
+		 * @param object surface A surface to be used to set the source pattern
+		 * @param number x User-space X coordinate for surface origin
+		 * @param number y User-space Y coordinate for surface origin
+		 */
+		native function setSourceSurface( object surface, number x, number y )
+		{
+			/* NOTICE: ferite_object_is_sub_?_lass  */
+			if( ferite_object_is_sublass( surface, "Surface" ) == FE_TRUE )
+			{
+				cairo_t* context = self->odata;
+				cairo_surface_t* cairo_surface = surface->odata;
+				cairo_set_source_surface( context, cairo_surface, x, y );
+			}
+			FE_RETURN_VOID;
+		}
+		
+		/**
 		 * @function createPangoLayout
 		 * @declaration function createPangoLayout( )
 		 * @brief Creates a Pango layout object.
-		 * @return object A Pango layout object.
+		 * @return A Pango layout object.
 		 * @description Creates a layout object set up to match the current
 		                transformation and target surface of the Cairo context.
 		 */
@@ -208,9 +253,7 @@ namespace Cairo
 			if( NULL != nsb )
 			{
 				layout_class = nsb->data;
-				
 				layout_object = ferite_build_object( script, layout_class );
-				
 				UNMARK_VARIABLE_AS_DISPOSABLE( layout_object );
 				
 				pango_layout = pango_cairo_create_layout( context );
@@ -261,6 +304,85 @@ namespace Cairo
 	 */
 	abstract class Surface
 	{
+		native function writeToPNG( string filename )
+		{
+			cairo_surface_t* surface = self->odata;
+			cairo_surface_write_to_png( surface, filename->data );
+			FE_RETURN_VOID;
+		}
+	}
+	/**
+	 * @end
+	 */
+	
+	/**
+	 * @class ImageSurface
+	 * @extends Cairo.Surface
+	 */
+	class ImageSurface extends Surface
+	{
+		native function constructor( )
+		{
+			FE_RETURN_NULL_OBJECT;
+		}
+		
+		/**
+		 * @function constructor
+		 * @declaration function constructor( number width, number height )
+		 * @param number width The width
+		 * @param number height The height
+		 */
+		native function constructor( number width, number height )
+		{
+			/*
+			 * NOTE: This is ugly. Please do something about it.
+			 * Q: Should these be type casted to ints instead?
+			 */
+			long long_width = 0;
+			long long_height = 0;
+			
+			if( width < LONG_MAX )
+			{
+				long_width = (long)width;
+			}
+			
+			if( height < LONG_MAX )
+			{
+				long_height = (long)height;
+			}
+			
+			/*
+			 * ALSO NOTE: I have no idea what happens here if long_width or
+			 * long_height is bigger then an int.
+			 *
+			 * NOTE AGAIN: CAIRO_FORMAT_RGB24 should not be hard coded here.
+			 * We want it as an argument to the function.
+			 */
+			cairo_surface_t* surface = cairo_image_surface_create( CAIRO_FORMAT_RGB24, long_width, long_height );
+			super->odata = surface;
+		}
+		
+		/**
+		 * @function constructor
+		 * @declaration function constructor( string filename )
+		 * @brief Creates a new ImageSurface from a PNG file
+		 * @param string filename Name of PNG file to load
+		 * @return A new ImageSurface
+		 */
+		native function constructor( string filename )
+		{
+			cairo_surface_t* surface = cairo_image_surface_create_from_png( filename->data );
+			super->odata = surface;
+		}
+		
+		native function destructor( )
+		{
+			if( super->odata )
+			{
+				cairo_surface_t* surface = super->odata;
+				cairo_surface_destroy( surface );
+			}
+		}
 	}
 	/**
 	 * @end
@@ -280,7 +402,7 @@ namespace Cairo
 		native function constructor( )
 		{
 			cairo_surface_t* surface = cairo_pdf_surface_create( "pdffile.pdf", 595.28, 841.89 );
-			self->odata = surface;
+			super->odata = surface;
 		}
 		
 		/**
@@ -290,14 +412,14 @@ namespace Cairo
 		native function constructor( string filename, number width, number height )
 		{
 			cairo_surface_t* surface = cairo_pdf_surface_create( filename->data, width, height );
-			self->odata = surface;
+			super->odata = surface;
 		}
 		
 		native function destructor( )
 		{
-			if( self->odata )
+			if( super->odata )
 			{
-				cairo_surface_t* surface = self->odata;
+				cairo_surface_t* surface = super->odata;
 				cairo_surface_destroy( surface );
 			}
 		}
