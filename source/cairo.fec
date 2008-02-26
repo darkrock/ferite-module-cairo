@@ -67,7 +67,7 @@ namespace Cairo
 		/**
 		 * @function showPage
 		 * @declaration function showPage( )
-		 * @breif Emits and clears the current page for backends that support
+		 * @brief Emits and clears the current page for backends that support
 		          multiple pages.
 		 * @description Emits and clears the current page for backends that
 		                support multiple pages. Use copyPage() if you don't want
@@ -107,7 +107,7 @@ namespace Cairo
 		/**
 		 * @function stroke
 		 * @declaration function stroke( )
-		 * @breif Strokes the current path
+		 * @brief Strokes the current path
 		 */
 		native function stroke( )
 		{
@@ -131,7 +131,7 @@ namespace Cairo
 		/**
 		 * @function setSourceRGB
 		 * @declaration function setSourceRGB( number red, number green, number blue )
-		 * @biref Sets the source pattern within context to an opaque color.
+		 * @brief Sets the source pattern within context to an opaque color.
 		 * @param number red red component of color
 		 * @param number green component of color
 		 * @param number blue blue component of color
@@ -204,7 +204,7 @@ namespace Cairo
 		/**
 		 * @function lineTo
 		 * @declaration function lineTo( number x, number y )
-		 * @breif Adds a line to the path from the current point to the
+		 * @brief Adds a line to the path from the current point to the
 		          position specified.
 		 * @param number x The X coordinate
 		 * @param number y The Y coordinate
