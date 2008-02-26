@@ -166,11 +166,7 @@ namespace Cairo
 		native function selectFontFace( string family, number slant, number weight )
 		{
 			cairo_t* context = self->odata;
-			/*
-			 * NOTE: We need to dome some kind of check here if slant or weight
-			 * are bigger then an int. I think..
-			 */
-			cairo_select_font_face( context, family->data, (int)slant, (int)weight );
+			cairo_select_font_face( context, family->data, VAI( params[1] ), VAI( params[2] ) );
 			FE_RETURN_VOID;
 		}
 		
@@ -361,7 +357,8 @@ namespace Cairo
 			
 			cairo_format_t cairo_format;
 			
-			if( CAIRO_FORMAT_VALID( VAI( params[0] ) ) )
+			/* 3 is the number of the last format */
+			if( VAI( params[0] ) <= 3 )
 			{
 				cairo_format = VAI( params[0] );
 			}

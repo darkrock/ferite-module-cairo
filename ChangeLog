@@ -1,4 +1,11 @@
 -------------------------------------------------------------------------------
+2008-02-26 14:34 (CET), Tobias Eriksson <tobias@cention.net>
+
+ * CAIRO_FORMAT_VALID is not defined in cairo.h so where needed another
+   sulution is used.
+ * Uses VAI( var ) in Cairo.Context.selectFontFace() instead of typecastings.
+
+-------------------------------------------------------------------------------
 2008-02-26 11:59 (CET), Tobias Eriksson <tobias@cention.net>
 
  * Fixed missspellings of "brief".
