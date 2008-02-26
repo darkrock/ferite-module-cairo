@@ -317,10 +317,25 @@ namespace Cairo
 		native function constructor( number format, number width, number height )
 		{
 			/*
-			 * NOTE: It is really bad to type cast like this. Some nice check
-			 * should be done before doing it.
+			 * TODO: Make this good.
 			 */
-			cairo_surface_t* surface = cairo_image_surface_create( (int)format, (int)width, (int)height );
+			
+			cairo_format_t cairo_format;
+			
+			if( CAIRO_FORMAT_VALID( VAI( params[0] ) ) )
+			{
+				cairo_format = VAI( params[0] );
+			}
+			else
+			{
+				cairo_format = CAIRO_FORMAT_ARGB32;
+			}
+			
+			cairo_surface_t* surface = cairo_image_surface_create(
+				cairo_format,
+				VAI( params[1] ),
+				VAI( params[2] ) );
+			
 			super->odata = surface;
 		}
 		
@@ -336,14 +351,26 @@ namespace Cairo
 		native function constructor( string data, number format, number width, number height, number stride )
 		{
 			/*
-			 * We need to check if these type castings can be done safe.
+			 * TODO: Make this good.
 			 */
+			
+			cairo_format_t cairo_format;
+			
+			if( CAIRO_FORMAT_VALID( VAI( params[1] ) ) )
+			{
+				cairo_format = VAI( params[1] );
+			}
+			else
+			{
+				cairo_format = CAIRO_FORMAT_ARGB32;
+			}
+			
 			cairo_surface_t* surface = cairo_image_surface_create_for_data(
 				data->data,
-				(int)format,
-				(int)width,
-				(int)height,
-				(int)stride );
+				cairo_format,
+				VAI( params[2] ),
+				VAI( params[3] ),
+				VAI( params[4] ) );
 			
 			super->odata = surface;
 		}

@@ -1,4 +1,10 @@
 -------------------------------------------------------------------------------
+2008-02-26 11:04 (CET), Tobias Eriksson <tobias@cention.net>
+
+ * Changed the way the typecastings are made again. Now actually no
+   typecastings are made at all. But I don't know if that is the right way.
+
+-------------------------------------------------------------------------------
 2008-02-26 08:41 (CET), Tobias Eriksson <tobias@cention.net>
 
  * The variables slant and weight are directly type cast instead of the way
