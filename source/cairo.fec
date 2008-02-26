@@ -105,6 +105,30 @@ namespace Cairo
 		}
 		
 		/**
+		 * @function stroke
+		 * @declaration function stroke( )
+		 * @breif Strokes the current path
+		 */
+		native function stroke( )
+		{
+			cairo_t* context = self->odata;
+			cairo_stroke( context );
+			FE_RETURN_VOID;
+		}
+		
+		/**
+		 * @function setLineWidth
+		 * @declaration function setLineWidth( number width )
+		 * @brief Sets the current line width within the context.
+		 */
+		native function setLineWidth( number width )
+		{
+			cairo_t* context = self->odata;
+			cairo_set_line_width( context, width );
+			FE_RETURN_VOID;
+		}
+		
+		/**
 		 * @function setSourceRGB
 		 * @declaration function setSourceRGB( number red, number green, number blue )
 		 * @biref Sets the source pattern within context to an opaque color.
@@ -170,13 +194,28 @@ namespace Cairo
 		 * @param number x The X coordinate of the new position.
 		 * @param number y The Y coordinate of the new position.
 		 */
-		native function moveTo(number x, number y)
+		native function moveTo( number x, number y )
 		{
 			cairo_t* context = self->odata;
 			cairo_move_to( context, x, y );
 			FE_RETURN_VOID;
 		}
-		 
+		
+		/**
+		 * @function lineTo
+		 * @declaration function lineTo( number x, number y )
+		 * @breif Adds a line to the path from the current point to the
+		          position specified.
+		 * @param number x The X coordinate
+		 * @param number y The Y coordinate
+		 */
+		native function lineTo( number x, number y )
+		{
+			cairo_t* context = self->odata;
+			cairo_line_to( context, x, y );
+			FE_RETURN_VOID;
+		}
+		
 		/**
 		 * @function showText
 		 * @declaration function showText( string text )
