@@ -1,4 +1,9 @@
 -------------------------------------------------------------------------------
+2008-02-26 14:36 (CET), Tobias Eriksson <tobias@cention.net>
+
+ * Forgot to make all changes from CAIRO_FORMAT_VALID to the other solution.
+
+-------------------------------------------------------------------------------
 2008-02-26 14:34 (CET), Tobias Eriksson <tobias@cention.net>
 
  * CAIRO_FORMAT_VALID is not defined in cairo.h so where needed another

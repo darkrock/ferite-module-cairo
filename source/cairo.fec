@@ -392,7 +392,7 @@ namespace Cairo
 			
 			cairo_format_t cairo_format;
 			
-			if( CAIRO_FORMAT_VALID( VAI( params[1] ) ) )
+			if( VAI( params[0] ) <= 3 )
 			{
 				cairo_format = VAI( params[1] );
 			}
