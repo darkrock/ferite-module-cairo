@@ -213,6 +213,23 @@ namespace Cairo
 		}
 		
 		/**
+		 * @function rectangle
+		 * @declaration function rectangle( number x, number y, number width, number height )
+		 * @brief Adds a closed sub-path rectangle of the given size to
+		          the current path at the specified position.
+		 * @param number x The X coordinate of the top left corner of the rectangle
+		 * @param number y The Y coordinate to the top left corner of the rectangle
+		 * @param number width The width of the rectangle 
+		 * @param number height The height of the rectangle
+		 */
+		native function rectangle( number x, number y, number width, number height )
+		{
+			cairo_t* context = self->odata;
+			cairo_rectangle( context, x, y, width, height );
+			FE_RETURN_VOID;
+		}
+		
+		/**
 		 * @function showText
 		 * @declaration function showText( string text )
 		 * @brief Draws a string of text.
