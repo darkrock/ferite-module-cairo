@@ -20,6 +20,11 @@ namespace Cairo
 	
 	final number FONT_WEIGHT_NORMAL = 0;
 	final number FONT_WEIGHT_BOLD = 1;
+		
+	final number FORMAT_ARGB32 = 0;
+	final number FORMAT_RGB24 = 1;
+ 	final number FORMAT_A8 = 2;
+	final number FORMAT_A1 = 3;
 	
 	/**
 	 * @class Context
@@ -136,36 +141,12 @@ namespace Cairo
 		 */
 		native function selectFontFace( string family, number slant, number weight )
 		{
-			cairo_font_slant_t cairo_slant;
-			cairo_font_weight_t cairo_weight;
-			
-			/* WARNING: Very ugly. Please resolv this somehow. */
-			if( slant == 0.0 )
-			{
-				cairo_slant = CAIRO_FONT_SLANT_NORMAL;
-			}
-			else if( slant == 1.0 )
-			{
-				cairo_slant = CAIRO_FONT_SLANT_ITALIC;
-			}
-		 	else if( slant == 2.0 )
-		 	{
-		 		cairo_slant = CAIRO_FONT_SLANT_OBLIQUE;
-		 	}
-		 	
-		 	if( weight == 0.0 )
-		 	{
-		 		cairo_weight = CAIRO_FONT_WEIGHT_NORMAL;
-		 	}
-			else if( weight == 1.0 )
-		 	{
-				cairo_weight = CAIRO_FONT_WEIGHT_BOLD;
-			}
-			
 			cairo_t* context = self->odata;
-			
-			cairo_select_font_face( context, family->data, cairo_slant, cairo_weight );
-			
+			/*
+			 * NOTE: We need to dome some kind of check here if slant or weight
+			 * are bigger then an int. I think..
+			 */
+			cairo_select_font_face( context, family->data, (int)slant, (int)weight );
 			FE_RETURN_VOID;
 		}
 		
@@ -328,37 +309,42 @@ namespace Cairo
 		
 		/**
 		 * @function constructor
-		 * @declaration function constructor( number width, number height )
+		 * @declaration function constructor( number format, number width, number height )
+		 * @param number format The format
 		 * @param number width The width
 		 * @param number height The height
 		 */
-		native function constructor( number width, number height )
+		native function constructor( number format, number width, number height )
 		{
 			/*
-			 * NOTE: This is ugly. Please do something about it.
-			 * Q: Should these be type casted to ints instead?
+			 * NOTE: It is really bad to type cast like this. Some nice check
+			 * should be done before doing it.
 			 */
-			long long_width = 0;
-			long long_height = 0;
-			
-			if( width < LONG_MAX )
-			{
-				long_width = (long)width;
-			}
-			
-			if( height < LONG_MAX )
-			{
-				long_height = (long)height;
-			}
-			
+			cairo_surface_t* surface = cairo_image_surface_create( (int)format, (int)width, (int)height );
+			super->odata = surface;
+		}
+		
+		/**
+		 * @function constructor
+		 * @declaration function constructor( string data, number format, number width, number height, number stride )
+		 * @param string data
+		 * @param number format
+		 * @param number width
+		 * @param number height
+		 * @param number stride
+		 */
+		native function constructor( string data, number format, number width, number height, number stride )
+		{
 			/*
-			 * ALSO NOTE: I have no idea what happens here if long_width or
-			 * long_height is bigger then an int.
-			 *
-			 * NOTE AGAIN: CAIRO_FORMAT_RGB24 should not be hard coded here.
-			 * We want it as an argument to the function.
+			 * We need to check if these type castings can be done safe.
 			 */
-			cairo_surface_t* surface = cairo_image_surface_create( CAIRO_FORMAT_RGB24, long_width, long_height );
+			cairo_surface_t* surface = cairo_image_surface_create_for_data(
+				data->data,
+				(int)format,
+				(int)width,
+				(int)height,
+				(int)stride );
+			
 			super->odata = surface;
 		}
 		
