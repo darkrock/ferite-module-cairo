@@ -81,6 +81,57 @@ namespace Cairo
 		}
 		
 		/**
+		 * @function save
+		 * @declaration function save( )
+		 * @brief Makes a copy of the current state and saves it on an internal
+		          stack of saved states
+		 */
+		native function save( )
+		{
+			cairo_t* context = self->odata;
+			cairo_save( context );
+			FE_RETURN_VOID;
+		}
+		
+		/**
+		 * @function restore
+		 * @declaration function restore( )
+		 * @brief Restores the state saved by a preceding call to save( )
+		 */
+		native function restore( )
+		{
+			cairo_t* context = self->odata;
+			cairo_restore( context );
+			FE_RETURN_VOID;
+		}
+		
+		/**
+		 * @function translate
+		 * @declaration translate( number tx, number ty )
+		 * @param number tx amount to translate in the X direction
+		 * @param number ty amount to translate in the Y direction
+		 */
+		native function translate( number tx, number ty )
+		{
+			cairo_t* cr = self->odata;
+			cairo_translate( cr, tx, ty );
+			FE_RETURN_VOID;
+		}
+		
+		/**
+		 * @function scale
+		 * @declaration save( number sx, number sy )
+		 * @param number sx scale factor for the X dimension
+		 * @param number sy scale factor for the Y dimension
+		 */
+		native function scale( number sx, number sy )
+		{
+			cairo_t* cr = self->odata;
+			cairo_scale( cr, sx, sy );
+			FE_RETURN_VOID;
+		}
+		
+		/**
 		 * @function paint
 		 * @declaration function paint( )
 		 * @brief Paints the current source everywhere within the current clip region
@@ -209,6 +260,23 @@ namespace Cairo
 		{
 			cairo_t* context = self->odata;
 			cairo_line_to( context, x, y );
+			FE_RETURN_VOID;
+		}
+		
+		/**
+		 * @function arc
+		 * @declaration functio arc( number xc, number yc, number radius, number angle1, number angle2 )
+		 * @brief Adds a circular arc of the given radius to the current path
+		 * @param number xc X position of the center of the arc
+		 * @param number xy Y position of the center of the arc
+		 * @param number radius the radius of the arc
+		 * @param number angle1 the start angle, in radians
+		 * @param number angle2 the end angle, in radians
+		 */
+		native function arc( number xc, number yc, number radius, number angle1, number angle2 )
+		{
+			cairo_t* context = self->odata;
+			cairo_arc( context, xc, yc, radius, angle1, angle2 );
 			FE_RETURN_VOID;
 		}
 		
