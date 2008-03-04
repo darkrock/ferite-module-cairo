@@ -217,7 +217,7 @@ namespace Cairo
 		native function selectFontFace( string family, number slant, number weight )
 		{
 			cairo_t* context = self->odata;
-			cairo_select_font_face( context, family->data, VAI( params[1] ), VAI( params[2] ) );
+			cairo_select_font_face( context, family->data, (int)slant, (int)weight );
 			FE_RETURN_VOID;
 		}
 		
@@ -443,9 +443,9 @@ namespace Cairo
 			cairo_format_t cairo_format;
 			
 			/* 3 is the number of the last format */
-			if( VAI( params[0] ) <= 3 )
+			if( (int)format <= 3 )
 			{
-				cairo_format = VAI( params[0] );
+				cairo_format = (int)format;
 			}
 			else
 			{
@@ -454,8 +454,8 @@ namespace Cairo
 			
 			cairo_surface_t* surface = cairo_image_surface_create(
 				cairo_format,
-				VAI( params[1] ),
-				VAI( params[2] ) );
+				(int)width,
+				(int)height );
 			
 			super->odata = surface;
 		}
@@ -477,9 +477,9 @@ namespace Cairo
 			
 			cairo_format_t cairo_format;
 			
-			if( VAI( params[0] ) <= 3 )
+			if( (int)format <= 3 )
 			{
-				cairo_format = VAI( params[1] );
+				cairo_format = (int)format;
 			}
 			else
 			{
@@ -489,9 +489,9 @@ namespace Cairo
 			cairo_surface_t* surface = cairo_image_surface_create_for_data(
 				data->data,
 				cairo_format,
-				VAI( params[2] ),
-				VAI( params[3] ),
-				VAI( params[4] ) );
+				(int)width,
+				(int)height,
+				(int)stride );
 			
 			super->odata = surface;
 		}
