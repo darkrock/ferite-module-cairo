@@ -331,6 +331,18 @@ namespace Cairo
 		}
 		
 		/**
+		 * @function newSubPath
+		 * @declaration function newSubPath( )
+		 * @brief Begin a new sub-path.
+		 */
+		native function newSubPath( )
+		{
+			cairo_t* cr = self->odata;
+			cairo_new_sub_path( cr );
+			FE_RETURN_VOID;
+		}
+		
+		/**
 		 * @function createPangoLayout
 		 * @declaration function createPangoLayout( )
 		 * @brief Creates a Pango layout object.
