@@ -42,17 +42,22 @@ namespace Cairo
 		 * @declaration function constructor( object surface )
 		 * @brief This is the constructor for the class Context.
 		 * @param object surface a Cairo surface
-		 * @return A newly created Cairo context object.
+		 * @return A newly created Cairo context object or null on error.
 		 */
 		native function constructor( object surface )
 		{
 			/* NOTICE: ferite_object_is_sub_?_lass  */
-			if( ferite_object_is_sublass( surface, "Surface" ) == FE_TRUE )
-			{
-				cairo_surface_t* cairo_surface = surface->odata;
-				cairo_t* context = cairo_create( cairo_surface );
-				self->odata = context;
-			}
+			if( ferite_object_is_sublass( surface, "Surface" ) == FE_FALSE )
+				FE_RETURN_NULL_OBJECT;
+			
+			cairo_surface_t* cairo_surface = surface->odata;
+			cairo_t* context = cairo_create( cairo_surface );
+			cairo_status_t status = cairo_status( context );
+			
+			if( status == CAIRO_STATUS_NO_MEMORY )
+				FE_RETURN_NULL_OBJECT;
+			
+			self->odata = context;
 		}
 		
 		native function destructor( )
