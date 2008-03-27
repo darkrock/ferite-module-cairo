@@ -1,8 +1,8 @@
 -------------------------------------------------------------------------------
-2008-03-27 09:29 (CET), Tobias Eriksson <tobias@cention.net>
+2008-03-27 09:35 (CET), Tobias Eriksson <tobias@cention.net>
 
- * Cleaned up a bit in the constructor for ImageSurface and added error
-   checking to that same constructor.
+ * Cleaned up a bit in the constructors for ImageSurface and added error
+   checking to that same constructors.
 
 -------------------------------------------------------------------------------
 2008-03-27 09:22 (CET), Tobias Eriksson <tobias@cention.net>

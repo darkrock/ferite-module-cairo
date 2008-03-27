@@ -492,23 +492,16 @@ namespace Cairo
 		 * @param number width
 		 * @param number height
 		 * @param number stride
+		 * @return A newly created ImageSurface object or null on error
 		 */
 		native function constructor( string data, number format, number width, number height, number stride )
 		{
-			/*
-			 * TODO: Make this good.
-			 */
-			
 			cairo_format_t cairo_format;
 			
 			if( (int)format <= 3 )
-			{
 				cairo_format = (int)format;
-			}
 			else
-			{
 				cairo_format = CAIRO_FORMAT_ARGB32;
-			}
 			
 			cairo_surface_t* surface = cairo_image_surface_create_for_data(
 				data->data,
@@ -516,6 +509,11 @@ namespace Cairo
 				(int)width,
 				(int)height,
 				(int)stride );
+			
+			cairo_status_t status = cairo_surface_status( surface );
+			
+			if( status != CAIRO_STATUS_SUCCESS )
+				FE_RETURN_NULL_OBJECT;
 			
 			super->odata = surface;
 		}
