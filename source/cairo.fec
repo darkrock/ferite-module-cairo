@@ -524,10 +524,17 @@ namespace Cairo
 		 * @brief Creates a new ImageSurface from a PNG file
 		 * @param string filename Name of PNG file to load
 		 * @return A new ImageSurface
+		 * @return A newly created ImageSurface object or null on error
 		 */
 		native function constructor( string filename )
 		{
 			cairo_surface_t* surface = cairo_image_surface_create_from_png( filename->data );
+			
+			cairo_status_t status = cairo_surface_status( surface );
+			
+			if( status != CAIRO_STATUS_SUCCESS )
+				FE_RETURN_NULL_OBJECT;
+			
 			super->odata = surface;
 		}
 		
