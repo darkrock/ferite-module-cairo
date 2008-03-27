@@ -558,23 +558,29 @@ namespace Cairo
 	 */
 	class PDFSurface extends Surface
 	{
-		/**
-		 * @function constructor
-		 * @declaration function constructor( )
-		 */
 		native function constructor( )
 		{
-			cairo_surface_t* surface = cairo_pdf_surface_create( "pdffile.pdf", 595.28, 841.89 );
-			super->odata = surface;
+			FE_RETURN_NULL_OBJECT;
 		}
 		
 		/**
 		 * @function constructor
 		 * @declaration function constructor( string filename, number width, number height )
+		 * @brief The constructor for PDFSurface.
+		 * @param string filename the name of the new PDF document
+		 * @param number width the width of the document
+		 * @param number height the height of the document
+		 * @return A newly created PDFSurface object or null on error
 		 */
 		native function constructor( string filename, number width, number height )
 		{
 			cairo_surface_t* surface = cairo_pdf_surface_create( filename->data, width, height );
+			
+			cairo_status_t status = cairo_surface_status( surface );
+			
+			if( status != CAIRO_STATUS_SUCCESS )
+				FE_RETURN_NULL_OBJECT;
+			
 			super->odata = surface;
 		}
 		

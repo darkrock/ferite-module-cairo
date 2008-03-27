@@ -1,4 +1,11 @@
 -------------------------------------------------------------------------------
+2008-03-27 09:48 (CET), Tobias Eriksson <tobias@cention.net>
+
+ * The default constructor for PDFSurface now returns null.
+ * Added some API doc comment to the other constructor of PDFSurface and added
+   error checking to that same constructor.
+
+-------------------------------------------------------------------------------
 2008-03-27 09:37 (CET), Tobias Eriksson <tobias@cention.net>
 
  * Cleaned up a bit in the constructors for ImageSurface and added error
