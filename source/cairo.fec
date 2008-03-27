@@ -459,29 +459,27 @@ namespace Cairo
 		 * @param number format The format
 		 * @param number width The width
 		 * @param number height The height
+		 * @return A newly created ImageSurface object or null on error
 		 */
 		native function constructor( number format, number width, number height )
 		{
-			/*
-			 * TODO: Make this good.
-			 */
-			
 			cairo_format_t cairo_format;
 			
 			/* 3 is the number of the last format */
 			if( (int)format <= 3 )
-			{
 				cairo_format = (int)format;
-			}
 			else
-			{
 				cairo_format = CAIRO_FORMAT_ARGB32;
-			}
 			
 			cairo_surface_t* surface = cairo_image_surface_create(
 				cairo_format,
 				(int)width,
 				(int)height );
+			
+			cairo_status_t status = cairo_surface_status( surface );
+			
+			if( status != CAIRO_STATUS_SUCCESS )
+				FE_RETURN_NULL_OBJECT;
 			
 			super->odata = surface;
 		}

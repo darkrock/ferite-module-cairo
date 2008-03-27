@@ -1,4 +1,10 @@
 -------------------------------------------------------------------------------
+2008-03-27 09:29 (CET), Tobias Eriksson <tobias@cention.net>
+
+ * Cleaned up a bit in the constructor for ImageSurface and added error
+   checking to that same constructor.
+
+-------------------------------------------------------------------------------
 2008-03-27 09:22 (CET), Tobias Eriksson <tobias@cention.net>
 
  * Added API doc comment to Cairo.Surface.writeToPNG() and added error
