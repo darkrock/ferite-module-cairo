@@ -445,6 +445,7 @@ namespace Cairo
 	/**
 	 * @class ImageSurface
 	 * @extends Cairo.Surface
+	 * @brief A Cairo surface for drawing in an image
 	 */
 	class ImageSurface extends Surface
 	{
