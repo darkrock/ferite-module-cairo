@@ -422,11 +422,20 @@ namespace Cairo
 	 */
 	abstract class Surface
 	{
+		/**
+		 * @function writeToPNG
+		 * @declaration function writeToPNG( string filename )
+		 * @breif Write the surface to a PNG file with the specified filename
+		 * @param string filename the name of the PNG file
+		 * @return True on success false on error
+		 */
 		native function writeToPNG( string filename )
 		{
 			cairo_surface_t* surface = self->odata;
-			cairo_surface_write_to_png( surface, filename->data );
-			FE_RETURN_VOID;
+			cairo_status_t status = cairo_surface_write_to_png( surface, filename->data );
+			if( status != CAIRO_STATUS_SUCCESS )
+				FE_RETURN_FALSE;
+			FE_RETURN_TRUE;
 		}
 	}
 	/**
