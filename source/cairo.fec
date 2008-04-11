@@ -524,7 +524,6 @@ namespace Cairo
 		 * @declaration function constructor( string filename )
 		 * @brief Creates a new ImageSurface from a PNG file
 		 * @param string filename Name of PNG file to load
-		 * @return A new ImageSurface
 		 * @return A newly created ImageSurface object or null on error
 		 */
 		native function constructor( string filename )
