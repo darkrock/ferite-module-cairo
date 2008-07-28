@@ -1,4 +1,12 @@
 -------------------------------------------------------------------------------
+2008-07-28 09:35 (CET), Tobias Eriksson <tobias@cention.net>
+
+ * Added API doc comments for public variables.
+ * Replaced ferite_object_is_sublass() calls with ferite_object_is_subclass().
+ * Added Context.rotate() function.
+ * Added Context.updatePangoLayout() function.
+
+-------------------------------------------------------------------------------
 2008-04-11 15:01 (CET), Tobias Eriksson <tobias@cention.net>
 
  * Fixed syntax error in the API doc.

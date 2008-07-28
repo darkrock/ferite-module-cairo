@@ -14,16 +14,60 @@ module-header
  */
 namespace Cairo
 {
+	/**
+	 * @variable FONT_SLANT_NORMAL
+	 * @type number
+	 */
 	final number FONT_SLANT_NORMAL = 0;
+	
+	/**
+	 * @variable FONT_SLANT_ITALIC
+	 * @type number
+	 */	
 	final number FONT_SLANT_ITALIC = 1;
+
+	/**
+	 * @variable FONT_SLANT_OBLIQUE
+	 * @type number
+	 */
 	final number FONT_SLANT_OBLIQUE = 2;
 	
+
+	/**
+	 * @variable FONT_WEIGHT_NORMAL
+	 * @type number
+	 */
 	final number FONT_WEIGHT_NORMAL = 0;
+
+	/**
+	 * @variable FONT_WEIGHT_BOLD
+	 * @type number
+	 */
 	final number FONT_WEIGHT_BOLD = 1;
 		
+
+	/**
+	 * @variable FORMAT_ARGB32
+	 * @type number
+	 */
 	final number FORMAT_ARGB32 = 0;
+
+	/**
+	 * @variable FORMAT_RGB24
+	 * @type number
+	 */
 	final number FORMAT_RGB24 = 1;
+
+	/**
+	 * @variable FORMAT_A8
+	 * @type number
+	 */
  	final number FORMAT_A8 = 2;
+	
+	/**
+	 * @variable FORMAT_A1
+	 * @type number
+	 */
 	final number FORMAT_A1 = 3;
 	
 	/**
@@ -46,8 +90,7 @@ namespace Cairo
 		 */
 		native function constructor( object surface )
 		{
-			/* NOTICE: ferite_object_is_sub_?_lass  */
-			if( ferite_object_is_sublass( surface, "Surface" ) == FE_FALSE )
+			if( ferite_object_is_subclass( surface, "Surface" ) == FE_FALSE )
 				FE_RETURN_NULL_OBJECT;
 			
 			cairo_surface_t* cairo_surface = surface->odata;
@@ -325,8 +368,7 @@ namespace Cairo
 		 */
 		native function setSourceSurface( object surface, number x, number y )
 		{
-			/* NOTICE: ferite_object_is_sub_?_lass  */
-			if( ferite_object_is_sublass( surface, "Surface" ) == FE_TRUE )
+			if( ferite_object_is_subclass( surface->klass, "Surface" ) == FE_TRUE )
 			{
 				cairo_t* context = self->odata;
 				cairo_surface_t* cairo_surface = surface->odata;
@@ -344,6 +386,19 @@ namespace Cairo
 		{
 			cairo_t* cr = self->odata;
 			cairo_new_sub_path( cr );
+			FE_RETURN_VOID;
+		}
+		
+		/**
+		 * @function rotate
+		 * @declaration native function rotate( number angle )
+		 * @brief Rotate
+		 * @param number angle angle (in radians) by which the user-space axes will be rotated 
+		 */
+		native function rotate( number angle )
+		{
+			cairo_t* cr = self->odata;
+			cairo_rotate( cr, angle );
 			FE_RETURN_VOID;
 		}
 		
@@ -407,6 +462,24 @@ namespace Cairo
 					PangoLayoutLine* layout_line = layoutLine->odata;
 					pango_cairo_show_layout_line(context, layout_line );
 				}
+			}
+			
+			FE_RETURN_VOID;
+		}
+		
+		/**
+		 * @function updatePangoLayout
+		 * @declaration native function updatePangoLayout( object layout )
+		 * @brief Update a Pango.Layout object
+		 * @param object layout a Pango.Layout object
+		 */
+		native function updatePangoLayout( object layout )
+		{
+			if( ferite_object_is_subclass( layout, "Pango.Layout" ) )
+			{
+				cairo_t* cr = self->odata;
+				PangoLayout* pango_layout = layout->odata;
+				pango_cairo_update_layout( cr, pango_layout );
 			}
 			
 			FE_RETURN_VOID;
