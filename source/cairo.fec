@@ -368,7 +368,7 @@ namespace Cairo
 		 */
 		native function setSourceSurface( object surface, number x, number y )
 		{
-			if( ferite_object_is_subclass( surface->klass, "Surface" ) == FE_TRUE )
+			if( ferite_object_is_subclass( surface, "Surface" ) == FE_TRUE )
 			{
 				cairo_t* context = self->odata;
 				cairo_surface_t* cairo_surface = surface->odata;
@@ -400,6 +400,48 @@ namespace Cairo
 			cairo_t* cr = self->odata;
 			cairo_rotate( cr, angle );
 			FE_RETURN_VOID;
+		}
+		
+		native function textExtents( string text )
+		{
+			FeriteNamespaceBucket* nsb = NULL;
+			
+			nsb = ferite_find_namespace( script, script->mainns, "Cairo.TextExtents", FENS_CLS );
+			
+			if( nsb )
+			{
+				cairo_t* cr = self->odata;
+				cairo_text_extents_t text_extents;
+				
+				FeriteVariable* v = NULL;
+				
+				FeriteVariable* text_extents_object = ferite_build_object( script, nsb->data );
+				UNMARK_VARIABLE_AS_DISPOSABLE( text_extents_object );
+				
+				cairo_text_extents( cr, text->data, &text_extents );
+				
+				v = ferite_create_number_double_variable( script, "xBearing", text_extents.x_bearing, FE_ALLOC );
+				ferite_object_set_var( script, VAO( text_extents_object ), "xBearing", v );
+
+				v = ferite_create_number_double_variable( script, "yBearing", text_extents.y_bearing, FE_ALLOC );
+				ferite_object_set_var( script, VAO( text_extents_object ), "yBearing", v );
+
+				v = ferite_create_number_double_variable( script, "width", text_extents.width, FE_ALLOC );
+				ferite_object_set_var( script, VAO( text_extents_object ), "width", v );
+
+				v = ferite_create_number_double_variable( script, "height", text_extents.height, FE_ALLOC );
+				ferite_object_set_var( script, VAO( text_extents_object ), "height", v );
+
+				v = ferite_create_number_double_variable( script, "xAdvance", text_extents.x_advance, FE_ALLOC );
+				ferite_object_set_var( script, VAO( text_extents_object ), "xAdvance", v );
+
+				v = ferite_create_number_double_variable( script, "yAdvance", text_extents.y_advance, FE_ALLOC );
+				ferite_object_set_var( script, VAO( text_extents_object ), "yAdvance", v );
+				
+				FE_RETURN_OBJECT( VAO( text_extents_object ) );
+			}
+			
+			FE_RETURN_NULL_OBJECT;
 		}
 		
 		/**
@@ -488,6 +530,15 @@ namespace Cairo
 	/**
 	 * @end
 	 */
+	
+	class TextExtents {
+		number xBearing;
+		number yBearing;
+		number width;
+		number height;
+		number xAdvance;
+		number yAdvance;
+	}
 	
 	/**
 	 * @class Surface
