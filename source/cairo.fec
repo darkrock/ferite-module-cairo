@@ -549,7 +549,7 @@ namespace Cairo
 		/**
 		 * @function writeToPNG
 		 * @declaration function writeToPNG( string filename )
-		 * @breif Write the surface to a PNG file with the specified filename
+		 * @brief Write the surface to a PNG file with the specified filename
 		 * @param string filename the name of the PNG file
 		 * @return True on success false on error
 		 */
@@ -560,6 +560,17 @@ namespace Cairo
 			if( status != CAIRO_STATUS_SUCCESS )
 				FE_RETURN_FALSE;
 			FE_RETURN_TRUE;
+		}
+		/**
+		 * @function flush
+		 * @declaration native function flush()
+		 * @brief Do any padning drawing
+		 */
+		native function flush()
+		{
+			cairo_surface_t* surface = self->odata;
+			cairo_surface_flush( surface );
+			FE_RETURN_VOID;
 		}
 	}
 	/**
