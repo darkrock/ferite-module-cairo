@@ -572,6 +572,13 @@ namespace Cairo
 			cairo_surface_flush( surface );
 			FE_RETURN_VOID;
 		}
+		
+		native function finish()
+		{
+			cairo_surface_t* surface = self->odata;
+			cairo_surface_finish( surface );
+			FE_RETURN_VOID;			
+		}
 	}
 	/**
 	 * @end
