@@ -416,7 +416,6 @@ namespace Cairo
 				FeriteVariable* v = NULL;
 				
 				FeriteVariable* text_extents_object = ferite_build_object( script, nsb->data );
-				UNMARK_VARIABLE_AS_DISPOSABLE( text_extents_object );
 				
 				cairo_text_extents( cr, text->data, &text_extents );
 				
@@ -438,7 +437,7 @@ namespace Cairo
 				v = ferite_create_number_double_variable( script, "yAdvance", text_extents.y_advance, FE_ALLOC );
 				ferite_object_set_var( script, VAO( text_extents_object ), "yAdvance", v );
 				
-				FE_RETURN_OBJECT( VAO( text_extents_object ) );
+				FE_RETURN_VAR( text_extents_object );
 			}
 			
 			FE_RETURN_NULL_OBJECT;
@@ -469,13 +468,12 @@ namespace Cairo
 			{
 				layout_class = nsb->data;
 				layout_object = ferite_build_object( script, layout_class );
-				UNMARK_VARIABLE_AS_DISPOSABLE( layout_object );
 				
 				pango_layout = pango_cairo_create_layout( context );
 								
 				VAO(layout_object)->odata = pango_layout;
 				
-				FE_RETURN_OBJECT( VAO( layout_object ) );
+				FE_RETURN_VAR( layout_object );
 			}
 			
 			FE_RETURN_NULL_OBJECT;
